@@ -2,8 +2,6 @@
 1. JOB POSTING INSERT, UPDATE AND DELETE TRIGGER
 2. COMPANY CASCADE DELETE TRIGGER
 3. JOB POSTINGS CASCADE DELETE TRIGGER
-5. JOB POSTING EXPERIENCE LEVEL VALIDATION TRIGGER
-4. JOB POSTING URL VALIDATION TRIGGER
 */ -------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -64,118 +62,22 @@ BEGIN
     END
 END;
 
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- COMPANY CASCADE DELETE TRIGGER
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- Example 
+select top 10 * from job_postings;
+delete from job_postings where job_id = 3958427;
+update job_postings set experience_level = 'Internship' where  job_id = 133196985;
+select * from job_postings_audit;
 
-CREATE TRIGGER trg_cascade_delete
-ON companies
-AFTER DELETE
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- NO DELETION OF JOB POSTINGS AUDIT TRIGGER
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+CREATE TRIGGER trg_prevent_modifications_job_postings_audit
+ON job_postings_audit
+INSTEAD OF DELETE
 AS
 BEGIN
-    SET NOCOUNT ON;
-
-    -- Check if the trigger was called recursively
-    IF (SELECT TRIGGER_NESTLEVEL()) > 1
-    BEGIN
-        RETURN;
-    END
-    -- Delete related records in company_industries
-    DELETE FROM company_industries
-    WHERE company_id IN (SELECT company_id FROM DELETED);
-
-    -- Delete related records in company_specialities
-    DELETE FROM company_specialities
-    WHERE company_id IN (SELECT company_id FROM DELETED);
-
-    -- Delete related records in employee_counts
-    DELETE FROM employee_counts
-    WHERE company_id IN (SELECT company_id FROM DELETED);
-
-    -- Delete related records in job_postings
-    DELETE FROM job_postings
-    WHERE company_id IN (SELECT company_id FROM DELETED);
+    RAISERROR('Modifications on job_postings_audit are not allowed.', 16, 1);
 END;
 
-
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- JOB POSTINGS CASCADE DELETE TRIGGER
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
--- Create the trigger
-CREATE TRIGGER trg_cascade_delete_job_postings
-ON job_postings
-AFTER DELETE
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    -- Check if the trigger was called recursively
-    IF (SELECT TRIGGER_NESTLEVEL()) > 1
-    BEGIN
-        RETURN;
-    END
-
-    -- Delete related records in job_skills
-    DELETE FROM job_skills
-    WHERE job_id IN (SELECT job_id FROM DELETED);
-
-    -- Delete related records in salaries
-    DELETE FROM salaries
-    WHERE job_id IN (SELECT job_id FROM DELETED);
-END;
-
-
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- JOB POSTING EXPERIENCE LEVEL VALIDATION TRIGGER
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-CREATE TRIGGER trg_validate_experience_level
-ON job_postings
-BEFORE INSERT, UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    -- Check if the trigger was called recursively
-    IF (SELECT TRIGGER_NESTLEVEL()) > 1
-    BEGIN
-        RETURN;
-    END
-
-    -- Check for valid experience levels
-    IF EXISTS (SELECT 1 FROM INSERTED WHERE experience_level NOT IN ('Director','Executive','Associate','Not Specified','Internship','Entry level','Mid-Senior level'))
-    BEGIN
-        RAISEERROR ('Invalid experience level. Allowed values are Director, Executive, Associate, Not Specified, Internship, Entry level and Mid-Senior Level', 16, 1);
-        ROLLBACK;
-        RETURN;
-    END
-END;
-
-
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
--- JOB POSTING URL VALIDATION TRIGGER
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-CREATE TRIGGER trg_validate_url_format
-ON job_postings
-BEFORE INSERT, UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    -- Check if the trigger was called recursively
-    IF (SELECT TRIGGER_NESTLEVEL()) > 1
-    BEGIN
-        RETURN;
-    END
-
-    -- Check for valid URL format
-    IF EXISTS (SELECT 1 FROM INSERTED WHERE job_posting_url NOT LIKE 'https://www.linkedin.com/jobs/%')
-    BEGIN
-        RAISEERROR ('Invalid URL format. URLs should start with ''https://www.linkedin.com/jobs/''.', 16, 1);
-        ROLLBACK;
-        RETURN;
-    END
-END;
-
+-- Example
+DELETE FROM job_postings_audit WHERE audit_id=2;
