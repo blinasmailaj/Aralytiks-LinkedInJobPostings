@@ -2,19 +2,8 @@
 -- DATABASE SCHEMA
 -----------------------------------------------------------------------------------------------------------------------
 
-create database linkedin_job_postings_db;
-use linkedin_job_postings_db;
-
-CREATE TABLE job_postings (
-    job_id BIGINT PRIMARY KEY,
-    company_id BIGINT,
-    title NVARCHAR(MAX),
-    description NVARCHAR(MAX),
-    work_type NVARCHAR(MAX),
-	experience_level NVARCHAR(MAX),
-    location NVARCHAR(MAX),
-    job_posting_url NVARCHAR(MAX)
-	);
+create database linkedInJobPostings;
+use linkedInJobPostings;
 
 CREATE TABLE companies (
     company_id BIGINT PRIMARY KEY,
@@ -29,54 +18,51 @@ CREATE TABLE companies (
 CREATE TABLE company_industries (
     company_id BIGINT,
     industry NVARCHAR(255),
-    PRIMARY KEY (company_id, industry)
+    PRIMARY KEY (company_id, industry),
+	FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE
 );
 
 CREATE TABLE company_specialities (
-	speciality_id INT IDENTITY PRIMARY KEY,
     company_id BIGINT,
-    speciality NVARCHAR(500), 
+    speciality NVARCHAR(255), 
+	PRIMARY KEY (company_id, speciality),
+	FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE
 );
 
 CREATE TABLE employee_counts (
+	employee_count_id INT IDENTITY PRIMARY KEY,
     company_id BIGINT,
     employee_count INT,
     follower_count INT,
-    time_recorded FLOAT,
-	PRIMARY KEY (company_id, time_recorded)
+    time_recorded INT,
+	FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE
 );
+
+CREATE TABLE job_postings (
+    job_id BIGINT PRIMARY KEY,
+    company_id BIGINT,
+    title NVARCHAR(MAX),
+    description NVARCHAR(MAX),
+    work_type NVARCHAR(MAX),
+	experience_level NVARCHAR(MAX),
+    location NVARCHAR(MAX),
+    job_posting_url NVARCHAR(MAX),
+	FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE
+	);
 
 CREATE TABLE job_skills (
     job_id BIGINT,
     skill_name NVARCHAR(255),
-    PRIMARY KEY (job_id,skill_name)
+    PRIMARY KEY (job_id,skill_name),
+	FOREIGN KEY (job_id) REFERENCES job_postings(job_id) ON DELETE CASCADE
 );
 
 CREATE TABLE salaries (
     salary_id INT PRIMARY KEY,
     job_id BIGINT,
-    med_salary NVARCHAR(MAX) ,
+    med_salary DECIMAL(18, 2) ,
     pay_period NVARCHAR(MAX),
     currency NVARCHAR(MAX),
-    compensation_type NVARCHAR(MAX)
+    compensation_type NVARCHAR(MAX),
+	FOREIGN KEY (job_id) REFERENCES job_postings(job_id) ON DELETE CASCADE
 );
-
-ALTER TABLE job_postings
-    ADD FOREIGN KEY (company_id) REFERENCES companies(company_id);
-
-ALTER TABLE company_industries
-    ADD FOREIGN KEY (company_id) REFERENCES companies(company_id);
-
-ALTER TABLE company_specialities
-    ADD FOREIGN KEY (company_id) REFERENCES companies(company_id);
-
-ALTER TABLE employee_counts
-    ADD FOREIGN KEY (company_id) REFERENCES companies(company_id);
-
-ALTER TABLE job_skills
-    ADD FOREIGN KEY (job_id) REFERENCES job_postings(job_id);
-
-ALTER TABLE salaries
-    ADD FOREIGN KEY (job_id) REFERENCES job_postings(job_id);
-
-

@@ -111,9 +111,10 @@ BEGIN
 END;
 
 -- Example 
-select * from job_postings where job_id = 3958427;
 
-DECLARE @job_id bigint = 3958427;
+SELECT TOP 5 * from job_postings;
+
+DECLARE @job_id bigint = 102339515;
 DECLARE @company_id bigint = 630152;
 DECLARE @title NVARCHAR(MAX) = NULL
 DECLARE @description NVARCHAR(MAX) = NULL;
@@ -131,6 +132,8 @@ EXEC ValidateUpdateJobPostings
     @experience_level,
     @location,
     @job_posting_url;
+
+SELECT * FROM job_postings where job_id = 102339515;
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 -- GET JOB POSTINGS BY LOCATION (WITH PAGINATION) STORED PROCEDURE
