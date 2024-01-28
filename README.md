@@ -38,8 +38,8 @@ The SQL folder contains various queries, views, stored procedures, and triggers:
 
 ### Triggers
 
-1. JOB POSTING INSERT, UPDATE AND DELETE TRIGGER
-2. DELETION OF JOB POSTINGS AUDITS TRIGGER
+1. Job posting insert, update and delete trigger
+2. Deletion of job postings audits trigger
 
 ### Stored Procedures
 
