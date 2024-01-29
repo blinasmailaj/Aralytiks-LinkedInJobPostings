@@ -54,11 +54,12 @@ The SQL folder contains various queries, views, stored procedures, and triggers:
 
 ### Views
 
-1. Evaluates skill demand by counting jobs and averaging employee counts per skill
-2. Shows industry diversity by counting companies and averaging employee counts
-3. Analyzes job distribution by experience levels, counting jobs and averaging employee counts
+1. Analyzes job distribution by experience levels, counting jobs and averaging employee counts
+2. Shows the companyid,company name and the amount of job postings for each company
+3. Creates a similar view to 'vw_CompanyJobCounts' with the distinc nr of job titles as addition
 
 ## Database Diagram
 
 ![Database Diagram](data/img/database_diagram.png)
+
 
