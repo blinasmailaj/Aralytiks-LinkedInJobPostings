@@ -15,6 +15,9 @@ BEGIN
     RETURN @Datetime;
 END;
 
+DECLARE @UnixTimestamp BIGINT = 1692644648;
+SELECT dbo.ConvertUnixTimestampToDatetime(@UnixTimestamp) AS [Formatted Date];
+
 --------------------------------------------------------------------------------------------------
 -- CONVERTING LISTED_TIME TO DATETIME FORMAT
 --------------------------------------------------------------------------------------------------
