@@ -50,6 +50,7 @@ The SQL folder contains various queries, views, stored procedures, and triggers:
 ### User Function
 
 1. Converting time_recorded to datetime format
+2. Converting listed_time to datetime format
 
 ### Views
 

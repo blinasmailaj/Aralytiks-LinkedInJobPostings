@@ -29,8 +29,7 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    -- Check if the trigger was called recursively
-    IF (SELECT TRIGGER_NESTLEVEL()) > 1
+        IF (SELECT TRIGGER_NESTLEVEL()) > 1
     BEGIN
         RETURN;
     END

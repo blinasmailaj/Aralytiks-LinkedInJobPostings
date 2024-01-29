@@ -1,5 +1,6 @@
 /* USER FUNCTIONS -------------------------------------------------------------------------------------------------------------------
 1. CONVERTING TIME_RECORDED TO DATETIME FORMAT
+2. CONVERTING LISTED_TIME TO DATETIME FORMAT
 */----------------------------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------------------------
@@ -14,6 +15,21 @@ BEGIN
     RETURN @Datetime;
 END;
 
--- Usage
-DECLARE @UnixTimestamp INT = 1699139828;
-SELECT dbo.ConvertUnixTimestampToDatetime(@UnixTimestamp) AS [Time Recorded Converted];
+--------------------------------------------------------------------------------------------------
+-- CONVERTING LISTED_TIME TO DATETIME FORMAT
+--------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION ConvertUnixTimestampToFormattedDate
+(
+    @UnixTimestamp BIGINT
+)
+RETURNS NVARCHAR(10)
+AS
+BEGIN
+    DECLARE @ConvertedDate DATETIME = DATEADD(MILLISECOND, @UnixTimestamp % 1000, DATEADD(SECOND, @UnixTimestamp / 1000, '19700101 00:00:00:000'));
+    
+    RETURN FORMAT(@ConvertedDate, 'yyyy/MM/dd');
+END;
+
+DECLARE @UnixTimestamp BIGINT = 1699050000000;
+SELECT dbo.ConvertUnixTimestampToFormattedDate(@UnixTimestamp) AS [Formatted Date];

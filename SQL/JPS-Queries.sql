@@ -89,7 +89,7 @@ SELECT
 FROM 
     job_postings jp
 JOIN 
-    salaries s ON jp.job_id = s.job_id
+    salaries s ON jp.job_id = s.job_idt
 GROUP BY 
     jp.title, s.currency
 ORDER BY 
@@ -220,27 +220,19 @@ ORDER BY follower_count DESC;
 --------------------------------------------------------------------------------------------------
 
 SELECT
-    company_name,
-    AVG(postings_per_month) AS [average job postings per month]
+    c.name AS company_name,
+    COUNT(j.job_id) / COUNT(DISTINCT CONVERT(NVARCHAR(6), dbo.ConvertUnixTimestampToFormattedDate(j.listed_time), 112)) 
+	AS [average postings per month]
 FROM
-    (
-        SELECT
-            c.name AS company_name,
-            COUNT(jp.job_id) AS postings_per_month,
-            DATEPART(MONTH, dbo.ConvertUnixTimestampToDatetime(ec.time_recorded)) AS posting_month
-        FROM
-            companies c
-        JOIN
-            employee_counts ec ON c.company_id = ec.company_id
-        JOIN
-            job_postings jp ON c.company_id = jp.company_id
-        GROUP BY
-            c.company_id, c.name, DATEPART(MONTH, dbo.ConvertUnixTimestampToDatetime(ec.time_recorded))
-    ) AS MonthlyPostings
+    companies c
+JOIN
+    job_postings j ON c.company_id = j.company_id
 GROUP BY
-    company_name
+    c.name
 ORDER BY
-    [average job postings per month] DESC;
+    [average postings per month] DESC;
+
+select top 5  listed_time from job_postings;
 
 --------------------------------------------------------------------------------------------------
 -- Companies with the highest job posting for a specific skill

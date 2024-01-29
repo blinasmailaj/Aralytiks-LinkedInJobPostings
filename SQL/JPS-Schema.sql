@@ -2,8 +2,8 @@
 -- DATABASE SCHEMA
 -----------------------------------------------------------------------------------------------------------------------
 
-create database linkedInJobPostings;
-use linkedInJobPostings;
+create database linkedInJobPostingsDB;
+use linkedInJobPostingsDB;
 
 CREATE TABLE companies (
     company_id BIGINT PRIMARY KEY,
@@ -46,6 +46,7 @@ CREATE TABLE job_postings (
     work_type NVARCHAR(MAX),
 	experience_level NVARCHAR(MAX),
     location NVARCHAR(MAX),
+    listed_time BIGINT,
     job_posting_url NVARCHAR(MAX),
 	FOREIGN KEY (company_id) REFERENCES companies(company_id) ON DELETE CASCADE
 	);

@@ -2,6 +2,8 @@
 1. Evaluates skill demand by counting jobs and averaging employee counts per skill
 2. Shows industry diversity by counting companies and averaging employee counts
 3. Analyzes job distribution by experience levels, counting jobs and averaging employee counts
+4. Shows the companyid,company name and the amount of job postings for each company
+5. Creates a similar view to 'vw_CompanyJobCounts' with the distinc nr of job titles as addition
 */ -------------------------------------------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -65,3 +67,39 @@ GROUP BY
 -- Example
 
 select * from vw_ExperienceLevelAnalysis;
+
+
+--Shows the companyid,company name and the amount of job postings for each company
+
+	CREATE VIEW vw_CompanyJobCounts AS
+SELECT
+    c.company_id,
+    c.name AS company_name,
+    COUNT(jp.job_id) AS total_job_postings
+FROM
+    companies c
+LEFT JOIN
+    job_postings jp ON c.company_id = jp.company_id
+GROUP BY
+    c.company_id, c.name;
+ 
+		select * from vw_CompanyJobCounts
+ 
+ 
+ -- Creates a similar view to 'vw_CompanyJobCounts' with the distinc nr of job titles as addition
+
+	CREATE VIEW vw_CompanyJobTitleStats AS
+SELECT
+    c.company_id,
+    c.name AS company_name,
+    COUNT(jp.job_id) AS total_job_postings,
+    COUNT(DISTINCT jp.title) AS distinct_job_titles
+FROM
+    companies c
+LEFT JOIN
+    job_postings jp ON c.company_id = jp.company_id
+GROUP BY
+    c.company_id, c.name;
+ 
+ 
+	select * from vw_CompanyJobTitleStats
